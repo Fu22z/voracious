@@ -12,6 +12,7 @@ const VORACIOUS_FIELD_NAMES = new Map([
   ['audio', 'Audio'],
   ['image', 'Image'],
   ['selected_text', 'Selected Text'],
+  ['english', 'English'],
 ]);
 
 const FIELD_DEFAULTS = new Map([

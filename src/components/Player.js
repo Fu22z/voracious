@@ -233,8 +233,8 @@ export default class Player extends Component {
     }
   };
 
-  getSubsToDisplay = (time, subtitleMode, subtitleState) => {
-    const result = this.getOrderedSubtitleTracks().map((subTrack, subTrackIdx) => {
+  getSubsToDisplay = (time, subtitleMode, subtitleState, subtitleTrackId) => {
+    const result = this.getOrderedSubtitleTracks().map((subTrack, subtitleTrackId) => {
       const chunk = subTrack.chunkSet ? getChunkAtTime(subTrack.chunkSet, time) : null;
 
       return {
@@ -575,8 +575,8 @@ export default class Player extends Component {
           </div>
           <PlayControls onBack={this.handleBack} onAhead={this.handleAhead} onReplay={this.handleReplay} onTogglePause={this.handleTogglePause} onContinue={this.handleContinue} onToggleRuby={this.handleToggleRuby} onToggleHelp={this.handleToggleHelp} onNumberKey={this.handleNumberKey} onExportCard={this.handleExportCard} onToggleFullscreen={this.handleToggleFullscreen} />
         </div>
-        <button className="Player-big-button Player-exit-button" onClick={this.handleExit}>↩</button>
-        <div className="Player-subtitle-controls-panel">
+        <button className="Player-big-button Player-exit-button" onClick={this.handleExit} style={{display: this.props.preferences.showHelp ? 'block' : 'none'}}>↩</button>
+        <div className="Player-subtitle-controls-panel" style={{display: this.props.preferences.showHelp ? 'block' : 'none'}}>
           Subtitle Mode:&nbsp;
           <Select options={Object.entries(MODE_TITLES).map(([k, v]) => ({value: k, label: v}))} onChange={this.handleSetSubtitleMode} value={this.state.subtitleMode} />&nbsp;&nbsp;
           <button onClick={e => { e.preventDefault(); this.handleToggleHelp(); }}>Toggle Help</button>
@@ -638,7 +638,7 @@ export default class Player extends Component {
         ) : null}
         { this.state.exporting ? (
           <div className="Player-export-panel">
-            <PlayerExportPanel ankiPrefs={this.props.ankiPrefs} onExtractAudio={this.props.onExtractAudio} onExtractFrameImage={this.props.onExtractFrameImage} onDone={this.handleExportDone} {...this.state.exporting} />
+            <PlayerExportPanel getSubsToDisplay={this.getSubsToDisplay(this.props.video.playbackPosition,"manual",[],1)} ankiPrefs={this.props.ankiPrefs} onExtractAudio={this.props.onExtractAudio} onExtractFrameImage={this.props.onExtractFrameImage} onDone={this.handleExportDone} {...this.state.exporting} />
           </div>
         ) : null}
       </div>
