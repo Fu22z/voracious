@@ -10,7 +10,9 @@ import { getChunkAtTime, getPrevChunkAtTime, getNextChunkAtTime } from '../util/
 
 const { remote } = window.require('electron');
 
+
 class VideoWrapper extends Component {
+
   constructor(props) {
     super(props);
     this.videoElem = null;
@@ -78,7 +80,7 @@ class PlayControls extends Component {
       return;
     }
 
-    const { onBack, onAhead, onReplay, onTogglePause, onContinue, onToggleRuby, onToggleHelp, onNumberKey, onExportCard, onToggleFullscreen } = this.props;
+    const { onBack, onAhead, onReplay, onTogglePause, onContinue, onToggleRuby, onToggleHelp, onPosShift, onNegShift, onNumberKey, onExportCard, onToggleFullscreen } = this.props;
 
     if (!e.repeat) {
       if ((e.keyCode >= 49) && (e.keyCode <= 57)) {
@@ -132,6 +134,16 @@ class PlayControls extends Component {
             e.preventDefault();
             break;
 
+          case 74: // J key
+            onNegShift();
+            e.preventDefault();
+            break;
+
+          case 75: // K key
+            onPosShift();
+            e.preventDefault();
+            break;
+
           default:
             // ignore
             break;
@@ -160,7 +172,7 @@ const MODE_TITLES = {
   manual: 'Manual',
   qcheck: 'Quick Check',
   listen: 'Listening Practice',
-  read: 'Reading Practice',
+  read: 'Reading Practice', 
 };
 
 // Player
@@ -173,10 +185,13 @@ export default class Player extends Component {
     const subtitleMode = props.preferences.subtitleMode;
     const subtitleState = this.initialSubtitleState(subtitleMode);
     const displayedSubTime = props.video.playbackPosition;
+    var displayedSubOffset = 0;
+
     this.state = {
       subtitleMode, // we just initialize from preference
       subtitleState,
       displayedSubTime,
+      displayedSubOffset,
       displayedSubs: this.getSubsToDisplay(displayedSubTime, subtitleMode, subtitleState),
       noAudio: false,
       exporting: null,
@@ -260,10 +275,11 @@ export default class Player extends Component {
       return;
     }
 
-    const newDisplayedSubTime = time;
+    const newDisplayedSubTime = time + this.state.displayedSubOffset;
     let newDisplayedSubs = this.getSubsToDisplay(newDisplayedSubTime, this.state.subtitleMode, this.state.subtitleState);
     let updateSubs = true;
-
+    console.log(this.state.displayedSubOffset);
+    console.log(this.state.displayedSubTime);
     // Determine if we need to auto-pause
     // Is the video playing? Don't want to mis-trigger pause upon seeking
     if (this.videoIsPlaying) {
@@ -482,6 +498,16 @@ export default class Player extends Component {
     onSetPreference('showHelp', !preferences.showHelp);
   };
 
+  handleOnPosShift = () => {
+    this.state.displayedSubOffset += 0.1;
+    this.state.displayedSubTime += this.state.displayedSubOffset;
+  };
+
+  handleOnNegShift = () => {
+    this.state.displayedSubOffset -= 0.1;
+    this.state.displayedSubTime += this.state.displayedSubOffset;
+  };
+
   handleNumberKey = (number) => {
     if (this.state.subtitleMode === 'manual') {
       const newTrackHidden = [...this.state.subtitleState.trackHidden];
@@ -573,7 +599,7 @@ export default class Player extends Component {
               })}
             </div>
           </div>
-          <PlayControls onBack={this.handleBack} onAhead={this.handleAhead} onReplay={this.handleReplay} onTogglePause={this.handleTogglePause} onContinue={this.handleContinue} onToggleRuby={this.handleToggleRuby} onToggleHelp={this.handleToggleHelp} onNumberKey={this.handleNumberKey} onExportCard={this.handleExportCard} onToggleFullscreen={this.handleToggleFullscreen} />
+          <PlayControls onBack={this.handleBack} onAhead={this.handleAhead} onReplay={this.handleReplay} onTogglePause={this.handleTogglePause} onContinue={this.handleContinue} onToggleRuby={this.handleToggleRuby} onToggleHelp={this.handleToggleHelp} onPosShift={this.handleOnPosShift} onNegShift={this.handleOnNegShift} onNumberKey={this.handleNumberKey} onExportCard={this.handleExportCard} onToggleFullscreen={this.handleToggleFullscreen} />
         </div>
         <button className="Player-big-button Player-exit-button" onClick={this.handleExit} style={{display: this.props.preferences.showHelp ? 'block' : 'none'}}>↩</button>
         <div className="Player-subtitle-controls-panel" style={{display: this.props.preferences.showHelp ? 'block' : 'none'}}>
@@ -594,6 +620,8 @@ export default class Player extends Component {
               <tr><td>Toggle Fullscreen:</td><td>F</td></tr>
               <tr><td>Toggle Furigana/Ruby:</td><td>R</td></tr>
               <tr><td>Toggle Help:</td><td>H</td></tr>
+              <tr><td>Offset Subs -0.1s</td><td>J</td></tr>
+              <tr><td>Offset Subs +0.1s</td><td>K</td></tr>
               {(this.state.subtitleMode === 'manual') ? (
                 <tr><td>Hide/Show<br />Sub Track:</td><td>[1-9]</td></tr>
               ) : null}
