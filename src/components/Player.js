@@ -656,6 +656,9 @@ export default class Player extends Component {
               }
             })()}
           </div>
+          <div className="Player-offset-popup" style={{display: this.props.preferences.showHelp ? 'block' : 'none'}}>
+            Offset: {this.state.displayedSubOffset}
+          </div>
         </div>
         { this.state.noAudio ? (
           <div className="Player-no-audio-warning-layer">
