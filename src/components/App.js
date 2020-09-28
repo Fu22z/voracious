@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Link, NavLink, Switch, Route, Redirect } from 'react-router-dom';
 import { ScrollContext } from 'react-router-scroll-4';
-
+import Plyr from 'plyr';
 import { extractAudioFromVideo, extractFrameImageFromVideo } from '../library';
 
 import './App.css';
@@ -29,6 +29,7 @@ const VideoListItem = (props) => {
 class App extends Component {
   render() {
     const { mainState, actions } = this.props;
+    const player = new Plyr('#player');
 
     if (mainState.modalLoadingMessage) {
       return <WidthWrapper><h1 className="header-font">{mainState.modalLoadingMessage}</h1></WidthWrapper>;
