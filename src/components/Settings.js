@@ -8,6 +8,7 @@ import SettingsAnki from './SettingsAnki';
 import SystemBrowserLink from './SystemBrowserLink.js';
 
 import './Settings.css';
+import SettingsSubStyle from './SettingsSubStyle';
 
 const { app } = window.require('electron').remote;
 
@@ -36,6 +37,10 @@ export default class Settings extends Component {
         <div className="Settings-section">
           <h2 className="Settings-section-title">Anki Export</h2>
           <SettingsAnki ankiPrefs={mainState.preferences.anki} onSavePrefs={(prefs) => { actions.setPreferenceAnki(prefs); }} />
+        </div>
+        <div className="Settings-section">
+          <h2 className="Settings-section-title">Subtitle Style Options</h2>
+          <SettingsSubStyle showSubBackground={mainState.preferences.showSubBackground} onEnableSubBackground={() => { actions.setPreference('showSubBackground', !mainState.preferences.showSubBackground)}}/>
         </div>
         <div className="Settings-section">
           <h2 className="Settings-section-title">Misc</h2>

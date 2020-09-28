@@ -57,6 +57,7 @@ class VideoWrapper extends Component {
 
   render() {
     const { videoURL, initialTime, onTimeUpdate, onPlaying, onPause, onEnded, onSeeking } = this.props;
+
     return (
       <video src={videoURL} controls controlsList="nodownload nofullscreen" onTimeUpdate={e => { onTimeUpdate(e.target.currentTime); }} onPlaying={onPlaying} onPause={onPause} onEnded={onEnded} onSeeking={onSeeking} ref={(el) => { this.videoElem = el; }} onLoadedMetadata={e => { e.target.currentTime = initialTime ? initialTime : 0; }} onCanPlay={this.handleCanPlay} />
     );
@@ -80,7 +81,7 @@ class PlayControls extends Component {
       return;
     }
 
-    const { onBack, onAhead, onReplay, onTogglePause, onContinue, onToggleRuby, onToggleHelp, onPosShift, onNegShift, onNumberKey, onExportCard, onToggleFullscreen } = this.props;
+    const { onBack, onAhead, onReplay, onTogglePause, onContinue, onToggleRuby, onToggleHelp, onToggleSubBackground, onPosShift, onNegShift, onNumberKey, onExportCard, onToggleFullscreen } = this.props;
 
     if (!e.repeat) {
       if ((e.keyCode >= 49) && (e.keyCode <= 57)) {
@@ -119,7 +120,6 @@ class PlayControls extends Component {
             break;
 
           case 70: // F key
-            // onToggleRuby();
             onToggleFullscreen();
             e.preventDefault();
             break;
@@ -141,6 +141,11 @@ class PlayControls extends Component {
 
           case 75: // K key
             onPosShift();
+            e.preventDefault();
+            break;
+          
+          case 66: // B key
+            onToggleSubBackground();
             e.preventDefault();
             break;
 
@@ -185,7 +190,7 @@ export default class Player extends Component {
     const subtitleMode = props.preferences.subtitleMode;
     const subtitleState = this.initialSubtitleState(subtitleMode);
     const displayedSubTime = props.video.playbackPosition;
-    var displayedSubOffset = 0;
+    const displayedSubOffset = 0;
 
     this.state = {
       subtitleMode, // we just initialize from preference
@@ -498,6 +503,11 @@ export default class Player extends Component {
     onSetPreference('showHelp', !preferences.showHelp);
   };
 
+  handleToggleSubBackground = () => {
+    const { preferences, onSetPreference } = this.props;
+    onSetPreference('showSubBackground', !preferences.showSubBackground);
+  };
+
   handleOnPosShift = () => {
     this.state.displayedSubOffset += 0.1;
     this.state.displayedSubTime += this.state.displayedSubOffset;
@@ -581,7 +591,8 @@ export default class Player extends Component {
                 }
 
                 return chunk ? (
-                  <div className="Player-text-chunk-outer" key={subTrack.id}>
+                  
+                  <div className={"Player-text-chunk-outer Player-text-chunk-outer-" + (this.props.preferences.showSubBackground ? 'hidden' : 'visible')} key={subTrack.id}>
                     <div className="Player-text-chunk-inner">
                       <div style={{position: 'relative'}}>
                         {hidden ? (
@@ -599,7 +610,7 @@ export default class Player extends Component {
               })}
             </div>
           </div>
-          <PlayControls onBack={this.handleBack} onAhead={this.handleAhead} onReplay={this.handleReplay} onTogglePause={this.handleTogglePause} onContinue={this.handleContinue} onToggleRuby={this.handleToggleRuby} onToggleHelp={this.handleToggleHelp} onPosShift={this.handleOnPosShift} onNegShift={this.handleOnNegShift} onNumberKey={this.handleNumberKey} onExportCard={this.handleExportCard} onToggleFullscreen={this.handleToggleFullscreen} />
+          <PlayControls onBack={this.handleBack} onAhead={this.handleAhead} onReplay={this.handleReplay} onTogglePause={this.handleTogglePause} onContinue={this.handleContinue} onToggleRuby={this.handleToggleRuby} onToggleHelp={this.handleToggleHelp} onToggleSubBackground={this.handleToggleSubBackground} onPosShift={this.handleOnPosShift} onNegShift={this.handleOnNegShift} onNumberKey={this.handleNumberKey} onExportCard={this.handleExportCard} onToggleFullscreen={this.handleToggleFullscreen} />
         </div>
         <button className="Player-big-button Player-exit-button" onClick={this.handleExit} style={{display: this.props.preferences.showHelp ? 'block' : 'none'}}>↩</button>
         <div className="Player-subtitle-controls-panel" style={{display: this.props.preferences.showHelp ? 'block' : 'none'}}>
@@ -657,7 +668,7 @@ export default class Player extends Component {
             })()}
           </div>
           <div className="Player-offset-popup" style={{display: this.props.preferences.showHelp ? 'block' : 'none'}}>
-            Offset: {this.state.displayedSubOffset}
+            Offset: {this.state.displayedSubOffset.toFixed(2)}
           </div>
         </div>
         { this.state.noAudio ? (

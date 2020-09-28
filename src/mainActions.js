@@ -19,6 +19,7 @@ const AnkiPreferencesRecord = new Record({
 const PreferencesRecord = new Record({
   showRuby: true,
   showHelp: true,
+  showSubBackground: false,
   subtitleMode: 'manual',
   subtitleOrder: new List(['jpn', 'eng']), // list of iso639-3 codes
   subtitleIgnores: new List([]), // list of iso639-3 codes
@@ -149,11 +150,13 @@ export default class MainActions {
 
       this.state.set(this.state.get().setIn(['preferences', 'showRuby'], profile.preferences.showRuby));
       this.state.set(this.state.get().setIn(['preferences', 'showHelp'], profile.preferences.showHelp));
+      this.state.set(this.state.get().setIn(['preferences', 'showSubBackground'], profile.preferences.showSubBackground));
       this.state.set(this.state.get().setIn(['preferences', 'subtitleMode'], profile.preferences.subtitleMode));
       this.state.set(this.state.get().setIn(['preferences', 'subtitleOrder'], new List(profile.preferences.subtitleOrder)));
       this.state.set(this.state.get().setIn(['preferences', 'subtitleIgnores'], new List(profile.preferences.subtitleIgnores)));
       this.state.set(this.state.get().setIn(['preferences', 'disabledDictionaries'], new ISet(profile.preferences.disabledDictionaries)));
       this.state.set(this.state.get().setIn(['preferences', 'dictionaryOrder'], new List(profile.preferences.dictionaryOrder)));
+      
 
       if (!profile.preferences.anki) {
         profile.preferences.anki = {};
@@ -182,6 +185,7 @@ export default class MainActions {
       preferences: {
         showRuby: state.preferences.showRuby,
         showHelp: state.preferences.showHelp,
+        showSubBackground: state.preferences.showSubBackground,
         subtitleMode: state.preferences.subtitleMode,
         subtitleOrder: state.preferences.subtitleOrder.toArray(),
         subtitleIgnores: state.preferences.subtitleIgnores.toArray(),

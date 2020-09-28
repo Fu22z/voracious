@@ -92,12 +92,14 @@
 }
 
 .Player-text-chunk-outer {
-  /*
-    With the text-shadow, this background seems optional.
-    Itt might be good to have it as an option. We put it in an outer
-    wrapper because I think it looks better when it's full-width.
-  */
-  /*background: rgba(0,0,0,0.5);*/
+}
+
+.Player-text-chunk-outer-hidden {
+  background: rgba(0,0,0,0);
+}
+
+.Player-text-chunk-outer-visible {
+  background: rgba(0,0,0,0.8);
 }
 
 .Player-text-chunk-inner {
