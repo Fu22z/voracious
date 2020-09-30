@@ -22,15 +22,17 @@ const SUBTITLE_LANG_EXTENSION_PATTERN = /(.*)\.([a-zA-Z]{2,3})\.(srt|vtt|ass)/i;
 const SUBTITLE_NOLANG_EXTENSION_PATTERN = /(.*)\.(srt|vtt|ass)/i;
 
 const fs = window.require('fs-extra'); // use window to avoid webpack
+const junk = window.require('junk');
 
 const listVideosRel = async (baseDir, relDir) => {
   const result = [];
   const videoFiles = [];
   const subtitleFilesMap = new Map(); // base -> [fn]
 
-  const dirents = await fs.readdir(path.join(baseDir, relDir));
+  let files = await fs.readdir(path.join(baseDir, relDir));
+  files = files.filter(junk.not);
 
-  for (const fn of dirents) {
+  for (const fn of files) {
     const absfn = path.join(baseDir, relDir, fn);
     const stat = await fs.stat(absfn);
 
